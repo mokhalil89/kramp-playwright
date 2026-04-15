@@ -1,0 +1,23 @@
+{
+  "credentials": {
+    "invalid": {
+      "username": "wrong-user",
+      "password": "wrong-password"
+    }
+  },
+  "search": {
+    "validProduct": {
+      "query": "VLD1578",
+      "title": "Compact tractor seat",
+      "productNumber": "VLD1578",
+      "brand": "Vapormatic",
+      "ean": "5035776844133"
+    },
+    "invalidProduct": {
+      "query": "liverpool jersey"
+    }
+  },
+  "cart": {
+    "quantity": 2
+  }
+}

@@ -6,28 +6,24 @@ dotenv.config();
 export default defineConfig({
   testDir: "./ui-tests/specs",
 
-  /* Parallel + CI safety */
   fullyParallel: true,
-  forbidOnly: !!process.env.CI, // fail build if test.only exists
-  retries: process.env.CI ? 2 : 0, // retry only in CI
-  workers: process.env.CI ? 1 : undefined, // avoid flaky parallel CI
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
 
-  /* Reports */
   reporter: [
-    ["list"], // nice local terminal output
+    ["list"],
     ["html", { outputFolder: "playwright-report", open: "never" }],
   ],
 
-  /* Where artifacts go */
   outputDir: "test-results",
 
-  /* Shared browser settings */
   use: {
     baseURL: "https://qa-task.demo.kramp.com",
 
     headless: process.env.HEADLESS !== "false",
 
-    trace: "on-first-retry", // best tradeoff cost/debug
+    trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
 
@@ -35,7 +31,6 @@ export default defineConfig({
     navigationTimeout: 30_000,
   },
 
-  /* Browser matrix */
   projects: [
     {
       name: "chromium",

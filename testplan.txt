@@ -1,0 +1,50 @@
+
+Ensure required environment variables are set in a local .env file.
+
+Page Object Model (POM) files encapsulate locators and actions; keep UI interactions inside ui-tests/pages.
+
+specs
+
+TypeScript test files live in ui-tests/specs. Use clear assertions and test.step to make failures easier to read.
+
+fixtures
+
+baseTest.ts manages browser contexts, user agent, and common setup.
+
+authTest.ts extends base test for authenticated flows and reusable login logic.
+
+utils
+
+Helpers such as cookieHelper.ts and localizationHelper.ts centralize cookie handling and localized text retrieval.
+
+Test Coverage Overview
+
+Authentication Tests: valid UI login (smoke); invalid UI login.
+
+Search Tests: valid search returns results (smoke); rent search with price range (smoke); invalid search shows no results.
+
+Product Detail Tests: product details and attributes validation; image visibility and attributes table.
+
+
+
+Best Practices
+Use descriptive test and function names for readability.
+
+Keep localization.json and testData.json up to date.
+
+Keep test logic in specs and page interactions in pages.
+
+Use fixtures to centralize setup and teardown.
+
+Tag critical tests with @smokeTests for selective runs.
+
+Prefer stable selectors (data-testid, getByRole) over brittle CSS/XPath.
+
+Future Improvements
+Add visual regression testing.
+
+Integrate performance tracing and metrics.
+
+Standardize data-test-id usage across the application.
+
+Localization testing is important (not possible to automate)
