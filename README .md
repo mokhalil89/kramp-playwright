@@ -1,151 +1,91 @@
 # KRAMP Playwright Test Automation Framework
 
-This project contains automated end-to-end tests for the KRAMP web application using Playwright with TypeScript. It follows the Page Object Model (POM) design pattern and supports UI, search, and product detail validations.
+Automated end-to-end tests for the KRAMP demo application using Playwright Test and TypeScript. Tests follow the Page Object Model (POM), use custom Playwright fixtures for consistent setup, and produce artifact reports for debugging.
 
-## Tech Stack
+## Quick start
 
-- Playwright
-- TypeScript
-- Node.js
-- dotenv (environment variables)
+Prerequisites:
 
-## Project Structure
-
-```text
-ui-tests/
-│
-├── specs/                 # Test files (auth, search, product)
-│   ├── auth.spec.ts
-│   ├── search.spec.ts
-│   └── product.spec.ts
-│
-├── pages/                 # Page Object Model (POM)
-│   ├── homePage.ts
-│   ├── loginPage.ts
-│   ├── productPage.ts
-│   └── pageManager.ts
-│
-├── fixtures/              # Custom Playwright fixtures
-│   └── authTest.ts
-│
-├── data/                  # Test data (JSON)
-│   └── testData.json
-│
-├── playwright.config.ts
-├── package.json
-└── .env.example
-```
-
-## Prerequisites
-
-Before running tests, ensure you have installed:
-
-- Node.js (>= 18)
-- npm (>= 9)
+- Node.js (>= 18) and npm (>= 9)
 - Git
-- Access credentials for:
-  - UI Login
-  - HTTP Basic Authentication (if applicable)
+- Docker (optional for containerized runs)
 
-## Environment Setup
-
-Create a `.env` file in the project root:
+Local setup:
 
 ```bash
-touch .env
-```
-
-Add following variables to the .env file
-
-UI_USER=your_ui_username
-UI_PASS=your_ui_password
-
-HTTP_USER=your_http_username
-HTTP_PASS=your_http_password
-
-## Installation
-
-Install project dependencies:
-
-```bash
-npm install
-```
-
-```Install playwright
-npx playwright install
-```
-
-##Key Features
-Page Object Model POM for modular, maintainable page logic.
-
-Data Driven Testing DDT using testData.json for reusable test inputs.
-
-Localization Support via localization.json and localizationHelper.ts.
-
-Reusable Fixtures (baseTest.ts, authTest.ts) for consistent setup and authenticated flows.
-
-Stable Selectors using data-testid and user-facing locators (getByRole, getByText) where appropriate.
-
-Cookie Management utilities to accept and persist cookies across tests.
-
-Headed and Headless Modes and Debug support.
-
-CI/CD Integration with GitHub Actions to build images, run smoke tests, and upload artifacts.
-
-```Prerequisites
-Node.js v18 or later
-```
-
-npm v9 or later
-
-```
-Git
-```
-
-```Installation
-Clone repository
-```
-
 git clone <your-repo-url>
 cd kramp-playwright
-Install dependencies
-
-```npm install
-Install Playwright browsers
+npm ci
+npx playwright install --with-deps
 ```
 
-```npx playwright install
-Install dotenv
-```
-
-```npm install dotenv
-Environment Setup
-Create a .env file in the project root and add credentials and configuration:
-```
+Create a `.env` file in the project root and add credentials (do not commit `.env`):
 
 ```env
 UI_USER=your_ui_username
 UI_PASS=your_ui_password
-HTTP_USER=your_http_username
-HTTP_PASS=your_http_password
+BASIC_AUTH_USER=your_basic_auth_user
+BASIC_AUTH_PASS=your_basic_auth_pass
 ```
 
-```Run All Tests
+Run tests:
+
+```bash
+# Run all tests
 npx playwright test
-```
 
-```Run a specific test file
-npx playwright test ui-tests/specs/product.spec.ts
-```
-
-```Run tests in Chromium only
+# Run Chromium only
 npx playwright test --project=chromium
-```
 
-```Run tests in headed mode
+# Run a single spec
+npx playwright test ui-tests/specs/search.spec.ts
+
+# Headed mode for debugging
 npx playwright test --headed
-```
 
-```Show last HTML report
+# Show the latest HTML report
 npx playwright show-report
 ```
+
+## Project layout
+
+```
+ui-tests/
+  specs/            # test suites (auth, search, product)
+  pages/            # Page objects (Home, Login, etc.)
+  fixtures/         # baseTest, authTest fixtures
+  utils/            # helpers (cookie, localization)
+  data/             # testData.json
+playwright.config.ts
+package.json
+Jenkinsfile
+Dockerfile
+.dockerignore
+```
+
+## What this repo provides
+
+- Page Object Model: separates page actions and selectors from test logic.
+- Fixtures: `baseTest` and `authTest` centralize context/page creation and authenticated contexts.
+- Robust waits & patterns: `Promise.all([waitForURL, click])`, `Promise.race`, explicit `expect` timeouts.
+- Artifacts: traces, screenshots, videos, and an HTML report for failure triage.
+
+## CI & Docker notes
+
+- `playwright.config.ts` reacts to `process.env.CI` (forbidOnly, retries, workers) to enable CI behavior.
+- A `Dockerfile` is included for running tests in a reproducible container. The `Jenkinsfile` demonstrates a pipeline that builds the image and runs tests.
+- In CI don’t use `.env` files; provide credentials via the CI secret store (Jenkins credentials, GitHub Actions secrets, etc.).
+
+## Debugging tips
+
+- Use `--headed` and `--debug` modes for step debugging.
+- Use `npx playwright show-report` to open the HTML report and inspect traces/screenshots/videos.
+
+## Contributing / Interview notes
+
+- When explaining the project, highlight fixture composition (`baseTest` + `authTest`), the POM structure, and anti‑flakiness patterns (explicit waits and Promise patterns).
+- Small known issues: a removed duplicate fixture file, a non‑standard `pressSequentially` call in `homePage.ts` (replace with `locator.type()`), and a silent catch in cookie helper (consider logging).
+
+---
+
+Generated README: cleaned and focused instructions for running tests and CI.

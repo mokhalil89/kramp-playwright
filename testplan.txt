@@ -1,50 +1,80 @@
+KRAMP Playwright Test Plan
 
-Ensure required environment variables are set in a local .env file.
+Purpose
+-------
+This test plan documents scope, objectives, test cases, execution process, and reporting for the KRAMP Playwright test suite.
 
-Page Object Model (POM) files encapsulate locators and actions; keep UI interactions inside ui-tests/pages.
+Scope
+-----
+- Functional end-to-end tests covering authentication (UI + HTTP basic), search, and product detail pages.
+- Runs against the QA demo site indicated by `baseURL` in `playwright.config.ts`.
 
-specs
+Test objectives
+---------------
+- Validate that UI authentication works for valid credentials and shows appropriate errors for invalid credentials.
+- Verify search returns expected product results and handles no-result cases.
+- Confirm product detail pages show required attributes (title, product number, EAN, brand) and images.
 
-TypeScript test files live in ui-tests/specs. Use clear assertions and test.step to make failures easier to read.
+Test cases (high level)
+-----------------------
+- Authentication
+  - Positive: HTTP auth + UI login (smoke)
+  - Negative: invalid HTTP auth returns 401/403
+  - Negative: invalid UI login shows server error message
 
-fixtures
+- Search
+  - Positive: search by product number returns the correct product
+  - Negative: search for irrelevant terms shows no results message
 
-baseTest.ts manages browser contexts, user agent, and common setup.
+- Product details
+  - Open product from search and verify ItemName, ItemNumber, EAN row, brand, and image visibility
 
-authTest.ts extends base test for authenticated flows and reusable login logic.
+Test data
+---------
+- `ui-tests/data/testData.json` contains credentials, valid/invalid search queries, product identifiers and expected product metadata.
+- Keep sensitive credentials in environment variables (`.env` locally or CI secrets in pipeline).
 
-utils
+Test environment
+----------------
+- Local: Node.js + Playwright installed. Use `npx playwright install --with-deps`.
+- CI: provide `UI_USER`, `UI_PASS`, `BASIC_AUTH_USER`, `BASIC_AUTH_PASS` via CI secret store. Ensure Playwright dependencies or use the provided Dockerfile.
 
-Helpers such as cookieHelper.ts and localizationHelper.ts centralize cookie handling and localized text retrieval.
+Execution process
+-----------------
+1. The `baseTest` fixture creates a browser context with a defined viewport and a `page` that navigates to `/` and accepts cookie banners.
+2. `authTest` composes on `baseTest` to provide a context with HTTP `httpCredentials` when required.
+3. Each spec constructs `new PageManager(page)` to access page objects and helpers and executes `test.step` blocks for readable steps.
 
-Test Coverage Overview
+Reporting & artifacts
+---------------------
+- HTML report: generated under `playwright-report/` (open with `npx playwright show-report`).
+- Traces, screenshots, and videos are stored in `test-results/` or `outputDir` configured in `playwright.config.ts`.
+- Jenkinsfile and Dockerfile in repository show how to persist and archive these artifacts in CI.
 
-Authentication Tests: valid UI login (smoke); invalid UI login.
+Flakiness mitigation
+--------------------
+- Use explicit waits and `expect` timeouts.
+- Use `Promise.all([page.waitForURL(...), click()])` to avoid navigation races.
+- Use `Promise.race` where tests expect multiple mutually exclusive outcomes (results vs no-results).
 
-Search Tests: valid search returns results (smoke); rent search with price range (smoke); invalid search shows no results.
+Tagging and selective runs
+-------------------------
+- Use test annotations (for example `@smoke`) in test titles to quickly run critical tests.
+- Use Playwright `--grep` or `--project` flags to run subsets of tests.
 
-Product Detail Tests: product details and attributes validation; image visibility and attributes table.
+Known issues & recommended improvements
+-------------------------------------
+- A removed duplicate fixture file was present earlier; keep fixtures centralized under `ui-tests/fixtures`.
+- Replace non-standard `pressSequentially` usage in `homePage.ts` with `locator.type()` for reliability.
+- Avoid silent `catch {}` without logging in helpers like `CookieHelper.acceptCookiesIfVisible()`.
 
+Maintenance notes
+-----------------
+- Keep `testData.json` and localization helpers updated when the application UI or copy changes.
+- Periodically run the test suite in CI to capture flaky tests and add traces/videos for debugging.
 
-
-Best Practices
-Use descriptive test and function names for readability.
-
-Keep localization.json and testData.json up to date.
-
-Keep test logic in specs and page interactions in pages.
-
-Use fixtures to centralize setup and teardown.
-
-Tag critical tests with @smokeTests for selective runs.
-
-Prefer stable selectors (data-testid, getByRole) over brittle CSS/XPath.
-
-Future Improvements
-Add visual regression testing.
-
-Integrate performance tracing and metrics.
-
-Standardize data-test-id usage across the application.
-
-Localization testing is important (not possible to automate)
+Execution checklist (quick)
+-------------------------
+1. Ensure env vars/CI secrets: `UI_USER`, `UI_PASS`, `BASIC_AUTH_USER`, `BASIC_AUTH_PASS`.
+2. `npm ci` and `npx playwright install --with-deps` (or use Docker image provided).
+3. Run `npx playwright test` or use CI pipeline.
