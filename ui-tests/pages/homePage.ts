@@ -17,9 +17,6 @@ export class HomePage {
 
     await login.waitFor({ state: "visible", timeout: 20000 });
 
-    // The login link navigates to a different subdomain
-    // (qa-task-login.demo.kramp.com). Use Promise.all to click
-    // and wait for the cross-origin navigation simultaneously.
     await Promise.all([
       this.page.waitForURL(/qa-task-login/, { timeout: 30000 }),
       login.click(),

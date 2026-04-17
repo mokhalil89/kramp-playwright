@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "mcp": "npx @playwright/mcp",
+    "prepare": "npx playwright install --with-deps",
     "test": "npx playwright test",
+    "test:ci": "CI=true npx playwright test --project=chromium --reporter=list,junit,html",
     "test:chromium": "npx playwright test --project=chromium",
     "test:headed": "npx playwright test --headed --project=chromium",
+    "test:debug": "npx playwright test --debug --project=chromium",
     "test:auth": "npx playwright test auth.spec.ts --project=chromium",
     "report": "npx playwright show-report"
   },
