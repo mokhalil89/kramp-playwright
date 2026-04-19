@@ -81,7 +81,7 @@ Dockerfile
 - Use `--headed` and `--debug` modes for step debugging.
 - Use `npx playwright show-report` to open the HTML report and inspect traces/screenshots/videos.
 
-## Contributing / Interview notes
+## Contributing notes
 
 - (`baseTest` + `authTest`), the POM structure, and anti‑flakiness patterns (explicit waits and Promise patterns).
 - Small known issues: a removed duplicate fixture file, a non‑standard `pressSequentially` call in `homePage.ts` (replace with `locator.type()`), and a silent catch in cookie helper (consider logging).
