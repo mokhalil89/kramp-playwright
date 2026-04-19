@@ -83,9 +83,7 @@ Dockerfile
 
 ## Contributing / Interview notes
 
-- When explaining the project, highlight fixture composition (`baseTest` + `authTest`), the POM structure, and anti‑flakiness patterns (explicit waits and Promise patterns).
+- (`baseTest` + `authTest`), the POM structure, and anti‑flakiness patterns (explicit waits and Promise patterns).
 - Small known issues: a removed duplicate fixture file, a non‑standard `pressSequentially` call in `homePage.ts` (replace with `locator.type()`), and a silent catch in cookie helper (consider logging).
 
 ---
-
-Generated README: cleaned and focused instructions for running tests and CI.
